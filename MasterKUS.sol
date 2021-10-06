@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
+
 library SafeKRC20 {
     using SafeMath for uint256;
     using Address for address;
@@ -9,7 +10,10 @@ library SafeKRC20 {
         address to,
         uint256 value
     ) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transfer.selector, to, value)
+        );
     }
 
     function safeTransferFrom(
@@ -18,7 +22,10 @@ library SafeKRC20 {
         address to,
         uint256 value
     ) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
+        );
     }
 
     /**
@@ -39,9 +46,12 @@ library SafeKRC20 {
         // solhint-disable-next-line max-line-length
         require(
             (value == 0) || (token.allowance(address(this), spender) == 0),
-            'SafeKRC20: approve from non-zero to non-zero allowance'
+            "SafeKRC20: approve from non-zero to non-zero allowance"
         );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.approve.selector, spender, value)
+        );
     }
 
     function safeIncreaseAllowance(
@@ -49,8 +59,17 @@ library SafeKRC20 {
         address spender,
         uint256 value
     ) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).add(value);
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+        uint256 newAllowance = token.allowance(address(this), spender).add(
+            value
+        );
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     function safeDecreaseAllowance(
@@ -60,9 +79,16 @@ library SafeKRC20 {
     ) internal {
         uint256 newAllowance = token.allowance(address(this), spender).sub(
             value,
-            'SafeKRC20: decreased allowance below zero'
+            "SafeKRC20: decreased allowance below zero"
         );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     /**
@@ -76,14 +102,21 @@ library SafeKRC20 {
         // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
         // the target address contains contract code and also asserts for success in the low-level call.
 
-        bytes memory returndata = address(token).functionCall(data, 'SafeKRC20: low-level call failed');
+        bytes memory returndata = address(token).functionCall(
+            data,
+            "SafeKRC20: low-level call failed"
+        );
         if (returndata.length > 0) {
             // Return data is optional
             // solhint-disable-next-line max-line-length
-            require(abi.decode(returndata, (bool)), 'SafeKRC20: KRC20 operation did not succeed');
+            require(
+                abi.decode(returndata, (bool)),
+                "SafeKRC20: KRC20 operation did not succeed"
+            );
         }
     }
 }
+
 contract Context {
     // Empty internal constructor, to prevent people from mistakenly deploying
     // an instance of this contract, which should be used via inheritance.
@@ -98,10 +131,14 @@ contract Context {
         return msg.data;
     }
 }
+
 contract Ownable is Context {
     address private _owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
@@ -123,7 +160,7 @@ contract Ownable is Context {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(_owner == _msgSender(), 'Ownable: caller is not the owner');
+        require(_owner == _msgSender(), "Ownable: caller is not the owner");
         _;
     }
 
@@ -151,11 +188,15 @@ contract Ownable is Context {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      */
     function _transferOwnership(address newOwner) internal {
-        require(newOwner != address(0), 'Ownable: new owner is the zero address');
+        require(
+            newOwner != address(0),
+            "Ownable: new owner is the zero address"
+        );
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }
 }
+
 interface IKRC20 {
     /**
      * @dev Returns the amount of tokens in existence.
@@ -198,7 +239,9 @@ interface IKRC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -207,7 +250,10 @@ interface IKRC20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address _owner, address spender) external view returns (uint256);
+    function allowance(address _owner, address spender)
+        external
+        view
+        returns (uint256);
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
@@ -252,8 +298,13 @@ interface IKRC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 }
+
 library SafeMath {
     /**
      * @dev Returns the addition of two unsigned integers, reverting on
@@ -267,7 +318,7 @@ library SafeMath {
      */
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
-        require(c >= a, 'SafeMath: addition overflow');
+        require(c >= a, "SafeMath: addition overflow");
 
         return c;
     }
@@ -283,7 +334,7 @@ library SafeMath {
      * - Subtraction cannot overflow.
      */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return sub(a, b, 'SafeMath: subtraction overflow');
+        return sub(a, b, "SafeMath: subtraction overflow");
     }
 
     /**
@@ -326,7 +377,7 @@ library SafeMath {
         }
 
         uint256 c = a * b;
-        require(c / a == b, 'SafeMath: multiplication overflow');
+        require(c / a == b, "SafeMath: multiplication overflow");
 
         return c;
     }
@@ -344,7 +395,7 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return div(a, b, 'SafeMath: division by zero');
+        return div(a, b, "SafeMath: division by zero");
     }
 
     /**
@@ -384,7 +435,7 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return mod(a, b, 'SafeMath: modulo by zero');
+        return mod(a, b, "SafeMath: modulo by zero");
     }
 
     /**
@@ -426,6 +477,7 @@ library SafeMath {
         }
     }
 }
+
 library Address {
     /**
      * @dev Returns true if `account` is a contract.
@@ -474,11 +526,17 @@ library Address {
      * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].
      */
     function sendValue(address payable recipient, uint256 amount) internal {
-        require(address(this).balance >= amount, 'Address: insufficient balance');
+        require(
+            address(this).balance >= amount,
+            "Address: insufficient balance"
+        );
 
         // solhint-disable-next-line avoid-low-level-calls, avoid-call-value
-        (bool success, ) = recipient.call{value: amount}('');
-        require(success, 'Address: unable to send value, recipient may have reverted');
+        (bool success, ) = recipient.call{value: amount}("");
+        require(
+            success,
+            "Address: unable to send value, recipient may have reverted"
+        );
     }
 
     /**
@@ -499,8 +557,11 @@ library Address {
      *
      * _Available since v3.1._
      */
-    function functionCall(address target, bytes memory data) internal returns (bytes memory) {
-        return functionCall(target, data, 'Address: low-level call failed');
+    function functionCall(address target, bytes memory data)
+        internal
+        returns (bytes memory)
+    {
+        return functionCall(target, data, "Address: low-level call failed");
     }
 
     /**
@@ -533,7 +594,13 @@ library Address {
         bytes memory data,
         uint256 value
     ) internal returns (bytes memory) {
-        return functionCallWithValue(target, data, value, 'Address: low-level call with value failed');
+        return
+            functionCallWithValue(
+                target,
+                data,
+                value,
+                "Address: low-level call with value failed"
+            );
     }
 
     /**
@@ -548,7 +615,10 @@ library Address {
         uint256 value,
         string memory errorMessage
     ) internal returns (bytes memory) {
-        require(address(this).balance >= value, 'Address: insufficient balance for call');
+        require(
+            address(this).balance >= value,
+            "Address: insufficient balance for call"
+        );
         return _functionCallWithValue(target, data, value, errorMessage);
     }
 
@@ -558,10 +628,12 @@ library Address {
         uint256 weiValue,
         string memory errorMessage
     ) private returns (bytes memory) {
-        require(isContract(target), 'Address: call to non-contract');
+        require(isContract(target), "Address: call to non-contract");
 
         // solhint-disable-next-line avoid-low-level-calls
-        (bool success, bytes memory returndata) = target.call{value: weiValue}(data);
+        (bool success, bytes memory returndata) = target.call{value: weiValue}(
+            data
+        );
         if (success) {
             return returndata;
         } else {
@@ -583,7 +655,7 @@ library Address {
 
 contract KRC20 is Context, IKRC20, Ownable {
     uint256 private constant _preMineSupply = 10000000 * 1e18;
-    uint256 private constant _maxSupply = 700000000 * 1e18; 
+    uint256 private constant _maxSupply = 700000000 * 1e18;
 
     using SafeMath for uint256;
     using Address for address;
@@ -618,50 +690,50 @@ contract KRC20 is Context, IKRC20, Ownable {
     /**
      * @dev Returns the KRC token owner.
      */
-    function getOwner() external override view returns (address) {
+    function getOwner() external view override returns (address) {
         return owner();
     }
 
     /**
      * @dev Returns the token name.
      */
-    function name() public override view returns (string memory) {
+    function name() public view override returns (string memory) {
         return _name;
     }
 
     /**
      * @dev Returns the token decimals.
      */
-    function decimals() public override view returns (uint8) {
+    function decimals() public view override returns (uint8) {
         return _decimals;
     }
 
     /**
      * @dev Returns the token symbol.
      */
-    function symbol() public override view returns (string memory) {
+    function symbol() public view override returns (string memory) {
         return _symbol;
     }
 
     /**
      * @dev See {KRC20-totalSupply}.
      */
-    function totalSupply() public override view returns (uint256) {
+    function totalSupply() public view override returns (uint256) {
         return _totalSupply;
     }
 
-    function preMineSupply() public override view returns (uint256) {
+    function preMineSupply() public view override returns (uint256) {
         return _preMineSupply;
     }
 
-    function maxSupply() public override view returns (uint256) {
+    function maxSupply() public view override returns (uint256) {
         return _maxSupply;
     }
 
     /**
      * @dev See {KRC20-balanceOf}.
      */
-    function balanceOf(address account) public override view returns (uint256) {
+    function balanceOf(address account) public view override returns (uint256) {
         return _balances[account];
     }
 
@@ -673,7 +745,11 @@ contract KRC20 is Context, IKRC20, Ownable {
      * - `recipient` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
+    function transfer(address recipient, uint256 amount)
+        public
+        override
+        returns (bool)
+    {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
@@ -681,7 +757,12 @@ contract KRC20 is Context, IKRC20, Ownable {
     /**
      * @dev See {KRC20-allowance}.
      */
-    function allowance(address owner, address spender) public override view returns (uint256) {
+    function allowance(address owner, address spender)
+        public
+        view
+        override
+        returns (uint256)
+    {
         return _allowances[owner][spender];
     }
 
@@ -692,7 +773,11 @@ contract KRC20 is Context, IKRC20, Ownable {
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(address spender, uint256 amount) public override returns (bool) {
+    function approve(address spender, uint256 amount)
+        public
+        override
+        returns (bool)
+    {
         _approve(_msgSender(), spender, amount);
         return true;
     }
@@ -718,7 +803,10 @@ contract KRC20 is Context, IKRC20, Ownable {
         _approve(
             sender,
             _msgSender(),
-            _allowances[sender][_msgSender()].sub(amount, 'KRC20: transfer amount exceeds allowance')
+            _allowances[sender][_msgSender()].sub(
+                amount,
+                "KRC20: transfer amount exceeds allowance"
+            )
         );
         return true;
     }
@@ -735,8 +823,15 @@ contract KRC20 is Context, IKRC20, Ownable {
      *
      * - `spender` cannot be the zero address.
      */
-    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
+    function increaseAllowance(address spender, uint256 addedValue)
+        public
+        returns (bool)
+    {
+        _approve(
+            _msgSender(),
+            spender,
+            _allowances[_msgSender()][spender].add(addedValue)
+        );
         return true;
     }
 
@@ -754,11 +849,17 @@ contract KRC20 is Context, IKRC20, Ownable {
      * - `spender` must have allowance for the caller of at least
      * `subtractedValue`.
      */
-    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
+    function decreaseAllowance(address spender, uint256 subtractedValue)
+        public
+        returns (bool)
+    {
         _approve(
             _msgSender(),
             spender,
-            _allowances[_msgSender()][spender].sub(subtractedValue, 'KRC20: decreased allowance below zero')
+            _allowances[_msgSender()][spender].sub(
+                subtractedValue,
+                "KRC20: decreased allowance below zero"
+            )
         );
         return true;
     }
@@ -795,10 +896,13 @@ contract KRC20 is Context, IKRC20, Ownable {
         address recipient,
         uint256 amount
     ) internal {
-        require(sender != address(0), 'KRC20: transfer from the zero address');
-        require(recipient != address(0), 'KRC20: transfer to the zero address');
+        require(sender != address(0), "KRC20: transfer from the zero address");
+        require(recipient != address(0), "KRC20: transfer to the zero address");
 
-        _balances[sender] = _balances[sender].sub(amount, 'KRC20: transfer amount exceeds balance');
+        _balances[sender] = _balances[sender].sub(
+            amount,
+            "KRC20: transfer amount exceeds balance"
+        );
         _balances[recipient] = _balances[recipient].add(amount);
         emit Transfer(sender, recipient, amount);
     }
@@ -812,11 +916,16 @@ contract KRC20 is Context, IKRC20, Ownable {
      *
      * - `to` cannot be the zero address.
      */
-    function _mint(address account, uint256 amount) internal returns(bool) {
-        require(account != address(0), 'KRC20: mint to the zero address');
-        if (amount.add(_totalSupply) > _maxSupply) {
-            return false;
-        }
+    function _mint(address account, uint256 amount) internal returns (bool) {
+        require(account != address(0), "KRC20: mint to the zero address");
+        require(
+            amount.add(_totalSupply) <= _maxSupply,
+            "KRC20: exceed _maxSupply"
+        );
+
+        // if (amount.add(_totalSupply) > _maxSupply) {
+        //     return false;
+        // }
 
         _totalSupply = _totalSupply.add(amount);
         _balances[account] = _balances[account].add(amount);
@@ -835,9 +944,12 @@ contract KRC20 is Context, IKRC20, Ownable {
      * - `account` must have at least `amount` tokens.
      */
     function _burn(address account, uint256 amount) internal {
-        require(account != address(0), 'KRC20: burn from the zero address');
+        require(account != address(0), "KRC20: burn from the zero address");
 
-        _balances[account] = _balances[account].sub(amount, 'KRC20: burn amount exceeds balance');
+        _balances[account] = _balances[account].sub(
+            amount,
+            "KRC20: burn amount exceeds balance"
+        );
         _totalSupply = _totalSupply.sub(amount);
         emit Transfer(account, address(0), amount);
     }
@@ -860,8 +972,8 @@ contract KRC20 is Context, IKRC20, Ownable {
         address spender,
         uint256 amount
     ) internal {
-        require(owner != address(0), 'KRC20: approve from the zero address');
-        require(spender != address(0), 'KRC20: approve to the zero address');
+        require(owner != address(0), "KRC20: approve from the zero address");
+        require(spender != address(0), "KRC20: approve to the zero address");
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
@@ -878,7 +990,10 @@ contract KRC20 is Context, IKRC20, Ownable {
         _approve(
             account,
             _msgSender(),
-            _allowances[account][_msgSender()].sub(amount, 'KRC20: burn amount exceeds allowance')
+            _allowances[account][_msgSender()].sub(
+                amount,
+                "KRC20: burn amount exceeds allowance"
+            )
         );
     }
 }
@@ -963,7 +1078,11 @@ library EnumerableSet {
     /**
      * @dev Returns true if the value is in the set. O(1).
      */
-    function _contains(Set storage set, bytes32 value) private view returns (bool) {
+    function _contains(Set storage set, bytes32 value)
+        private
+        view
+        returns (bool)
+    {
         return set._indexes[value] != 0;
     }
 
@@ -984,8 +1103,15 @@ library EnumerableSet {
      *
      * - `index` must be strictly less than {length}.
      */
-    function _at(Set storage set, uint256 index) private view returns (bytes32) {
-        require(set._values.length > index, 'EnumerableSet: index out of bounds');
+    function _at(Set storage set, uint256 index)
+        private
+        view
+        returns (bytes32)
+    {
+        require(
+            set._values.length > index,
+            "EnumerableSet: index out of bounds"
+        );
         return set._values[index];
     }
 
@@ -1001,7 +1127,10 @@ library EnumerableSet {
      * Returns true if the value was added to the set, that is if it was not
      * already present.
      */
-    function add(AddressSet storage set, address value) internal returns (bool) {
+    function add(AddressSet storage set, address value)
+        internal
+        returns (bool)
+    {
         return _add(set._inner, bytes32(uint256(value)));
     }
 
@@ -1011,14 +1140,21 @@ library EnumerableSet {
      * Returns true if the value was removed from the set, that is if it was
      * present.
      */
-    function remove(AddressSet storage set, address value) internal returns (bool) {
+    function remove(AddressSet storage set, address value)
+        internal
+        returns (bool)
+    {
         return _remove(set._inner, bytes32(uint256(value)));
     }
 
     /**
      * @dev Returns true if the value is in the set. O(1).
      */
-    function contains(AddressSet storage set, address value) internal view returns (bool) {
+    function contains(AddressSet storage set, address value)
+        internal
+        view
+        returns (bool)
+    {
         return _contains(set._inner, bytes32(uint256(value)));
     }
 
@@ -1039,7 +1175,11 @@ library EnumerableSet {
      *
      * - `index` must be strictly less than {length}.
      */
-    function at(AddressSet storage set, uint256 index) internal view returns (address) {
+    function at(AddressSet storage set, uint256 index)
+        internal
+        view
+        returns (address)
+    {
         return address(uint256(_at(set._inner, index)));
     }
 
@@ -1065,14 +1205,21 @@ library EnumerableSet {
      * Returns true if the value was removed from the set, that is if it was
      * present.
      */
-    function remove(UintSet storage set, uint256 value) internal returns (bool) {
+    function remove(UintSet storage set, uint256 value)
+        internal
+        returns (bool)
+    {
         return _remove(set._inner, bytes32(value));
     }
 
     /**
      * @dev Returns true if the value is in the set. O(1).
      */
-    function contains(UintSet storage set, uint256 value) internal view returns (bool) {
+    function contains(UintSet storage set, uint256 value)
+        internal
+        view
+        returns (bool)
+    {
         return _contains(set._inner, bytes32(value));
     }
 
@@ -1093,17 +1240,26 @@ library EnumerableSet {
      *
      * - `index` must be strictly less than {length}.
      */
-    function at(UintSet storage set, uint256 index) internal view returns (uint256) {
+    function at(UintSet storage set, uint256 index)
+        internal
+        view
+        returns (uint256)
+    {
         return uint256(_at(set._inner, index));
     }
 }
+
 // KuSwap token with Governance.
-contract KUSToken is KRC20('KuSwap', 'KUS') {
+contract KUSToken is KRC20("KuSwap", "KUS") {
     using EnumerableSet for EnumerableSet.AddressSet;
     EnumerableSet.AddressSet private _minters;
 
     /// @notice Creates `_amount` token to `_to`.
-    function mint(address _to, uint256 _amount) public onlyMinter returns(bool) {
+    function mint(address _to, uint256 _amount)
+        public
+        onlyMinter
+        returns (bool)
+    {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
         return true;
@@ -1116,7 +1272,7 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
     // https://github.com/compound-finance/compound-protocol/blob/master/contracts/Governance/Comp.sol
 
     /// @dev A record of each accounts delegate
-    mapping (address => address) internal _delegates;
+    mapping(address => address) internal _delegates;
 
     /// @notice A checkpoint for marking number of votes from a given block
     struct Checkpoint {
@@ -1125,42 +1281,50 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
     }
 
     /// @notice A record of votes checkpoints for each account, by index
-    mapping (address => mapping (uint32 => Checkpoint)) public checkpoints;
+    mapping(address => mapping(uint32 => Checkpoint)) public checkpoints;
 
     /// @notice The number of checkpoints for each account
-    mapping (address => uint32) public numCheckpoints;
+    mapping(address => uint32) public numCheckpoints;
 
     /// @notice The EIP-712 typehash for the contract's domain
-    bytes32 public constant DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,uint256 chainId,address verifyingContract)");
+    bytes32 public constant DOMAIN_TYPEHASH =
+        keccak256(
+            "EIP712Domain(string name,uint256 chainId,address verifyingContract)"
+        );
 
     /// @notice The EIP-712 typehash for the delegation struct used by the contract
-    bytes32 public constant DELEGATION_TYPEHASH = keccak256("Delegation(address delegatee,uint256 nonce,uint256 expiry)");
+    bytes32 public constant DELEGATION_TYPEHASH =
+        keccak256("Delegation(address delegatee,uint256 nonce,uint256 expiry)");
 
     /// @notice A record of states for signing / validating signatures
-    mapping (address => uint) public nonces;
+    mapping(address => uint256) public nonces;
 
-      /// @notice An event thats emitted when an account changes its delegate
-    event DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate);
+    /// @notice An event thats emitted when an account changes its delegate
+    event DelegateChanged(
+        address indexed delegator,
+        address indexed fromDelegate,
+        address indexed toDelegate
+    );
 
     /// @notice An event thats emitted when a delegate account's vote balance changes
-    event DelegateVotesChanged(address indexed delegate, uint previousBalance, uint newBalance);
+    event DelegateVotesChanged(
+        address indexed delegate,
+        uint256 previousBalance,
+        uint256 newBalance
+    );
 
     /**
      * @notice Delegate votes from `msg.sender` to `delegatee`
      * @param delegator The address to get delegatee for
      */
-    function delegates(address delegator)
-        external
-        view
-        returns (address)
-    {
+    function delegates(address delegator) external view returns (address) {
         return _delegates[delegator];
     }
 
-   /**
-    * @notice Delegate votes from `msg.sender` to `delegatee`
-    * @param delegatee The address to delegate votes to
-    */
+    /**
+     * @notice Delegate votes from `msg.sender` to `delegatee`
+     * @param delegatee The address to delegate votes to
+     */
     function delegate(address delegatee) external {
         return _delegate(msg.sender, delegatee);
     }
@@ -1176,14 +1340,12 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
      */
     function delegateBySig(
         address delegatee,
-        uint nonce,
-        uint expiry,
+        uint256 nonce,
+        uint256 expiry,
         uint8 v,
         bytes32 r,
         bytes32 s
-    )
-        external
-    {
+    ) external {
         bytes32 domainSeparator = keccak256(
             abi.encode(
                 DOMAIN_TYPEHASH,
@@ -1194,25 +1356,22 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
         );
 
         bytes32 structHash = keccak256(
-            abi.encode(
-                DELEGATION_TYPEHASH,
-                delegatee,
-                nonce,
-                expiry
-            )
+            abi.encode(DELEGATION_TYPEHASH, delegatee, nonce, expiry)
         );
 
         bytes32 digest = keccak256(
-            abi.encodePacked(
-                "\x19\x01",
-                domainSeparator,
-                structHash
-            )
+            abi.encodePacked("\x19\x01", domainSeparator, structHash)
         );
 
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "KUS::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "KUS::delegateBySig: invalid nonce");
+        require(
+            signatory != address(0),
+            "KUS::delegateBySig: invalid signature"
+        );
+        require(
+            nonce == nonces[signatory]++,
+            "KUS::delegateBySig: invalid nonce"
+        );
         require(now <= expiry, "KUS::delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
@@ -1222,13 +1381,10 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
      * @param account The address to get votes balance
      * @return The number of current votes for `account`
      */
-    function getCurrentVotes(address account)
-        external
-        view
-        returns (uint256)
-    {
+    function getCurrentVotes(address account) external view returns (uint256) {
         uint32 nCheckpoints = numCheckpoints[account];
-        return nCheckpoints > 0 ? checkpoints[account][nCheckpoints - 1].votes : 0;
+        return
+            nCheckpoints > 0 ? checkpoints[account][nCheckpoints - 1].votes : 0;
     }
 
     /**
@@ -1238,12 +1394,15 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
      * @param blockNumber The block number to get the vote balance at
      * @return The number of votes the account had as of the given block
      */
-    function getPriorVotes(address account, uint blockNumber)
+    function getPriorVotes(address account, uint256 blockNumber)
         external
         view
         returns (uint256)
     {
-        require(blockNumber < block.number, "KUS::getPriorVotes: not yet determined");
+        require(
+            blockNumber < block.number,
+            "KUS::getPriorVotes: not yet determined"
+        );
 
         uint32 nCheckpoints = numCheckpoints[account];
         if (nCheckpoints == 0) {
@@ -1276,9 +1435,7 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
         return checkpoints[account][lower].votes;
     }
 
-    function _delegate(address delegator, address delegatee)
-        internal
-    {
+    function _delegate(address delegator, address delegatee) internal {
         address currentDelegate = _delegates[delegator];
         uint256 delegatorBalance = balanceOf(delegator); // balance of underlying KUSs (not scaled);
         _delegates[delegator] = delegatee;
@@ -1288,12 +1445,18 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
         _moveDelegates(currentDelegate, delegatee, delegatorBalance);
     }
 
-    function _moveDelegates(address srcRep, address dstRep, uint256 amount) internal {
+    function _moveDelegates(
+        address srcRep,
+        address dstRep,
+        uint256 amount
+    ) internal {
         if (srcRep != dstRep && amount > 0) {
             if (srcRep != address(0)) {
                 // decrease old representative
                 uint32 srcRepNum = numCheckpoints[srcRep];
-                uint256 srcRepOld = srcRepNum > 0 ? checkpoints[srcRep][srcRepNum - 1].votes : 0;
+                uint256 srcRepOld = srcRepNum > 0
+                    ? checkpoints[srcRep][srcRepNum - 1].votes
+                    : 0;
                 uint256 srcRepNew = srcRepOld.sub(amount);
                 _writeCheckpoint(srcRep, srcRepNum, srcRepOld, srcRepNew);
             }
@@ -1301,7 +1464,9 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
             if (dstRep != address(0)) {
                 // increase new representative
                 uint32 dstRepNum = numCheckpoints[dstRep];
-                uint256 dstRepOld = dstRepNum > 0 ? checkpoints[dstRep][dstRepNum - 1].votes : 0;
+                uint256 dstRepOld = dstRepNum > 0
+                    ? checkpoints[dstRep][dstRepNum - 1].votes
+                    : 0;
                 uint256 dstRepNew = dstRepOld.add(amount);
                 _writeCheckpoint(dstRep, dstRepNum, dstRepOld, dstRepNew);
             }
@@ -1313,40 +1478,58 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
         uint32 nCheckpoints,
         uint256 oldVotes,
         uint256 newVotes
-    )
-        internal
-    {
-        uint32 blockNumber = safe32(block.number, "KUS::_writeCheckpoint: block number exceeds 32 bits");
+    ) internal {
+        uint32 blockNumber = safe32(
+            block.number,
+            "KUS::_writeCheckpoint: block number exceeds 32 bits"
+        );
 
-        if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
+        if (
+            nCheckpoints > 0 &&
+            checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber
+        ) {
             checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;
         } else {
-            checkpoints[delegatee][nCheckpoints] = Checkpoint(blockNumber, newVotes);
+            checkpoints[delegatee][nCheckpoints] = Checkpoint(
+                blockNumber,
+                newVotes
+            );
             numCheckpoints[delegatee] = nCheckpoints + 1;
         }
 
         emit DelegateVotesChanged(delegatee, oldVotes, newVotes);
     }
 
-    function safe32(uint n, string memory errorMessage) internal pure returns (uint32) {
+    function safe32(uint256 n, string memory errorMessage)
+        internal
+        pure
+        returns (uint32)
+    {
         require(n < 2**32, errorMessage);
         return uint32(n);
     }
 
-    function getChainId() internal pure returns (uint) {
+    function getChainId() internal pure returns (uint256) {
         uint256 chainId;
-        assembly { chainId := chainid() }
+        assembly {
+            chainId := chainid()
+        }
         return chainId;
     }
 
-
     function addMinter(address _addMinter) public onlyOwner returns (bool) {
-        require(_addMinter != address(0), "KUS: _addMinter is the zero address");
+        require(
+            _addMinter != address(0),
+            "KUS: _addMinter is the zero address"
+        );
         return EnumerableSet.add(_minters, _addMinter);
     }
 
     function delMinter(address _delMinter) public onlyOwner returns (bool) {
-        require(_delMinter != address(0), "KUS: _delMinter is the zero address");
+        require(
+            _delMinter != address(0),
+            "KUS: _delMinter is the zero address"
+        );
         return EnumerableSet.remove(_minters, _delMinter);
     }
 
@@ -1358,7 +1541,7 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
         return EnumerableSet.contains(_minters, account);
     }
 
-    function getMinter(uint256 _index) public view onlyOwner returns (address){
+    function getMinter(uint256 _index) public view onlyOwner returns (address) {
         require(_index <= getMinterLength() - 1, "KUS: index out of bounds");
         return EnumerableSet.at(_minters, _index);
     }
@@ -1370,13 +1553,54 @@ contract KUSToken is KRC20('KuSwap', 'KUS') {
     }
 }
 
-// MasterKUS is the master of KUS. He can make KUS and he is a fair guy.
+// MasterChef is the master of KUS. He can make KUS and he is a fair guy.
 // Note that it's ownable and the owner wields tremendous power. The ownership
 // will be transferred to a governance smart contract once KUS is sufficiently
 // distributed and the community can show to govern itself.
 // Have fun reading it
 
-contract MasterKUS is Ownable {
+/**
+ * @dev Contract module that helps prevent reentrant calls to a function.
+ *
+ * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier
+ * available, which can be applied to functions to make sure there are no nested
+ * (reentrant) calls to them.
+ *
+ * Note that because there is a single `nonReentrant` guard, functions marked as
+ * `nonReentrant` may not call one another. This can be worked around by making
+ * those functions `private`, and then adding `external` `nonReentrant` entry
+ * points to them.
+ *
+ * TIP: If you would like to learn more about reentrancy and alternative ways
+ * to protect against it, check out our blog post
+ * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
+ */
+abstract contract ReentrancyGuard {
+    uint256 private constant _NOT_ENTERED = 1;
+    uint256 private constant _ENTERED = 2;
+
+    uint256 private _status;
+
+    constructor() internal {
+        _status = _NOT_ENTERED;
+    }
+
+    /**
+     * @dev Prevents a contract from calling itself, directly or indirectly.
+     * Calling a `nonReentrant` function from another `nonReentrant`
+     * function is not supported. It is possible to prevent this from happening
+     * by making the `nonReentrant` function external, and make it call a
+     * `private` function that does the actual work.
+     */
+    modifier nonReentrant() {
+        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
+        _status = _ENTERED;
+        _;
+        _status = _NOT_ENTERED;
+    }
+}
+
+contract MasterChef is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeKRC20 for IKRC20;
     // Info of each user.
@@ -1408,11 +1632,11 @@ contract MasterKUS is Ownable {
     //Pools and Farms percent from token per block
     uint256 public stakingPercent;
     //Developers percent from token per block
-    uint256 public devPercent;
-      //KuVault fund percent from token per block
+    uint256 public immutable devPercent;
+    //KuVault fund percent from token per block
     uint256 public kuVaultPercent;
     //This will be 100% for Community Contents (com-engagement)
-    uint256 public comPercent;
+    uint256 public immutable comPercent;
     // Dev address.
     address public devaddr;
     // KuVault fund.
@@ -1441,6 +1665,11 @@ contract MasterKUS is Ownable {
         uint256 indexed pid,
         uint256 amount
     );
+    event UpdateMultiplier(uint256 multiplier);
+    event SetDevAddress(address dev);
+    event SetComAddress(address user);
+    event SetKuVaultAddress(address user);
+    event UpdateKusPerBlock(uint256 block);
 
     constructor(
         KUSToken _KUS,
@@ -1465,33 +1694,42 @@ contract MasterKUS is Ownable {
         kuVaultPercent = _kuVaultPercent;
         comPercent = _comPercent;
         lastBlockDevWithdraw = _startBlock;
-        
-        
+
         // staking pool
-        poolInfo.push(PoolInfo({
-            lpToken: _KUS,
-            allocPoint: 1000,
-            lastRewardBlock: startBlock,
-            accKUSPerShare: 0
-        }));
+        poolInfo.push(
+            PoolInfo({
+                lpToken: _KUS,
+                allocPoint: 1000,
+                lastRewardBlock: startBlock,
+                accKUSPerShare: 0
+            })
+        );
 
         totalAllocPoint = 1000;
-
     }
 
-      // avoid duplicate KuSwap-LPs
+    modifier poolExits(uint256 _pid) {
+        require(_pid < poolInfo.length, "MasterChef : Pool does not exist.");
+        _;
+    }
+
+    // avoid duplicate KuSwap-LPs
     mapping(address => bool) lpExist;
-    
+
     function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
         BONUS_MULTIPLIER = multiplierNumber;
+        emit UpdateMultiplier(multiplierNumber);
     }
 
     function poolLength() external view returns (uint256) {
         return poolInfo.length;
     }
 
-    function withdrawDevAndRefFee() public {
-        require(lastBlockDevWithdraw < block.number, 'Too soon, come back later!');
+    function withdrawDevAndRefFee() public nonReentrant {
+        require(
+            lastBlockDevWithdraw < block.number,
+            "Too soon, come back later!"
+        );
         uint256 multiplier = getMultiplier(lastBlockDevWithdraw, block.number);
         uint256 KUSReward = multiplier.mul(KUSPerBlock);
         KUS.mint(devaddr, KUSReward.mul(devPercent).div(percentDec));
@@ -1500,14 +1738,20 @@ contract MasterKUS is Ownable {
         lastBlockDevWithdraw = block.number;
     }
 
-      // Add a new lp to the pool. Can only be called by the owner.
+    // Add a new lp to the pool. Can only be called by the owner.
     // Fixed: Do Not add the same LP token more than once. Rewards will be messed up if you do.
-    function add(uint256 _allocPoint, IKRC20 _lpToken, bool _withUpdate) public onlyOwner {
+    function add(
+        uint256 _allocPoint,
+        IKRC20 _lpToken,
+        bool _withUpdate
+    ) public onlyOwner nonReentrant {
         require(!lpExist[address(_lpToken)], "Duplicate LP token");
         if (_withUpdate) {
             massUpdatePools();
         }
-        uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
+        uint256 lastRewardBlock = block.number > startBlock
+            ? block.number
+            : startBlock;
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(
             PoolInfo({
@@ -1521,32 +1765,57 @@ contract MasterKUS is Ownable {
     }
 
     // Update the given pool's KUS allocation point. Can only be called by the owner.
-    function set( uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyOwner {
+    function set(
+        uint256 _pid,
+        uint256 _allocPoint,
+        bool _withUpdate
+    ) public onlyOwner nonReentrant poolExits(_pid) {
         if (_withUpdate) {
             massUpdatePools();
         }
-        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
+        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(
+            _allocPoint
+        );
         poolInfo[_pid].allocPoint = _allocPoint;
     }
 
     // Return reward multiplier over the given _from to _to block.
-    function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-         return _to.sub(_from).mul(BONUS_MULTIPLIER);
+    function getMultiplier(uint256 _from, uint256 _to)
+        public
+        view
+        returns (uint256)
+    {
+        return _to.sub(_from).mul(BONUS_MULTIPLIER);
     }
 
     // View function to see pending KUS on frontend.
-    function pendingKUS(uint256 _pid, address _user) external view returns (uint256){
+    function pendingKUS(uint256 _pid, address _user)
+        external
+        view
+        poolExits(_pid)
+        returns (uint256)
+    {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
         uint256 accKUSPerShare = pool.accKUSPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (_pid == 0){
+        if (_pid == 0) {
             lpSupply = depositedKus;
         }
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
-            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 KUSReward = multiplier.mul(KUSPerBlock).mul(pool.allocPoint).div(totalAllocPoint).mul(stakingPercent).div(percentDec);
-            accKUSPerShare = accKUSPerShare.add(KUSReward.mul(1e12).div(lpSupply));
+            uint256 multiplier = getMultiplier(
+                pool.lastRewardBlock,
+                block.number
+            );
+            uint256 KUSReward = multiplier
+                .mul(KUSPerBlock)
+                .mul(pool.allocPoint)
+                .div(totalAllocPoint)
+                .mul(stakingPercent)
+                .div(percentDec);
+            accKUSPerShare = accKUSPerShare.add(
+                KUSReward.mul(1e12).div(lpSupply)
+            );
         }
         return user.amount.mul(accKUSPerShare).div(1e12).sub(user.rewardDebt);
     }
@@ -1560,13 +1829,13 @@ contract MasterKUS is Ownable {
     }
 
     // Update reward variables of the given pool to be up-to-date.
-    function updatePool(uint256 _pid) public {
+    function updatePool(uint256 _pid) public nonReentrant {
         PoolInfo storage pool = poolInfo[_pid];
         if (block.number <= pool.lastRewardBlock) {
             return;
         }
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (_pid == 0){
+        if (_pid == 0) {
             lpSupply = depositedKus;
         }
         if (lpSupply <= 0) {
@@ -1574,36 +1843,61 @@ contract MasterKUS is Ownable {
             return;
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 KUSReward = multiplier.mul(KUSPerBlock).mul(pool.allocPoint).div(totalAllocPoint).mul(stakingPercent).div(percentDec);
+        uint256 KUSReward = multiplier
+            .mul(KUSPerBlock)
+            .mul(pool.allocPoint)
+            .div(totalAllocPoint)
+            .mul(stakingPercent)
+            .div(percentDec);
         KUS.mint(address(this), KUSReward);
-        pool.accKUSPerShare = pool.accKUSPerShare.add(KUSReward.mul(1e12).div(lpSupply));
+        pool.accKUSPerShare = pool.accKUSPerShare.add(
+            KUSReward.mul(1e12).div(lpSupply)
+        );
         pool.lastRewardBlock = block.number;
     }
 
     // Deposit LP tokens to MasterChef for KUS allocation.
-    function deposit(uint256 _pid, uint256 _amount) public {
-        require (_pid != 0, 'deposit KUS by staking');
+    function deposit(uint256 _pid, uint256 _amount)
+        public
+        nonReentrant
+        poolExits(_pid)
+    {
+        require(_pid != 0, "deposit KUS by staking");
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accKUSPerShare).div(1e12).sub(user.rewardDebt);
+            uint256 pending = user
+                .amount
+                .mul(pool.accKUSPerShare)
+                .div(1e12)
+                .sub(user.rewardDebt);
             safeKUSTransfer(msg.sender, pending);
         }
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        pool.lpToken.safeTransferFrom(
+            address(msg.sender),
+            address(this),
+            _amount
+        );
         user.amount = user.amount.add(_amount);
         user.rewardDebt = user.amount.mul(pool.accKUSPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
     }
 
     // Withdraw LP tokens from MasterChef.
-    function withdraw(uint256 _pid, uint256 _amount) public {
-        require (_pid != 0, 'withdraw KUS by unstaking');
+    function withdraw(uint256 _pid, uint256 _amount)
+        public
+        nonReentrant
+        poolExits(_pid)
+    {
+        require(_pid != 0, "withdraw KUS by unstaking");
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(_pid);
-        uint256 pending = user.amount.mul(pool.accKUSPerShare).div(1e12).sub(user.rewardDebt);
+        uint256 pending = user.amount.mul(pool.accKUSPerShare).div(1e12).sub(
+            user.rewardDebt
+        );
         safeKUSTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
         user.rewardDebt = user.amount.mul(pool.accKUSPerShare).div(1e12);
@@ -1611,19 +1905,27 @@ contract MasterKUS is Ownable {
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
-        // Stake KUS tokens to MasterChef
-    function enterStaking(uint256 _amount) public {
+    // Stake KUS tokens to MasterChef
+    function enterStaking(uint256 _amount) public nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
         updatePool(0);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accKUSPerShare).div(1e12).sub(user.rewardDebt);
-            if(pending > 0) {
+            uint256 pending = user
+                .amount
+                .mul(pool.accKUSPerShare)
+                .div(1e12)
+                .sub(user.rewardDebt);
+            if (pending > 0) {
                 safeKUSTransfer(msg.sender, pending);
             }
         }
-        if(_amount > 0) {
-            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        if (_amount > 0) {
+            pool.lpToken.safeTransferFrom(
+                address(msg.sender),
+                address(this),
+                _amount
+            );
             user.amount = user.amount.add(_amount);
             depositedKus = depositedKus.add(_amount);
         }
@@ -1632,16 +1934,18 @@ contract MasterKUS is Ownable {
     }
 
     // Withdraw KUS tokens from STAKING.
-    function leaveStaking(uint256 _amount) public {
+    function leaveStaking(uint256 _amount) public nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(0);
-        uint256 pending = user.amount.mul(pool.accKUSPerShare).div(1e12).sub(user.rewardDebt);
-        if(pending > 0) {
+        uint256 pending = user.amount.mul(pool.accKUSPerShare).div(1e12).sub(
+            user.rewardDebt
+        );
+        if (pending > 0) {
             safeKUSTransfer(msg.sender, pending);
         }
-        if(_amount > 0) {
+        if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
             depositedKus = depositedKus.sub(_amount);
@@ -1651,13 +1955,24 @@ contract MasterKUS is Ownable {
     }
 
     // Want to withdraw without caring about KUS rewards? EMERGENCY ONLY.
-    function emergencyWithdraw(uint256 _pid) public {
+    function emergencyWithdraw(uint256 _pid)
+        public
+        nonReentrant
+        poolExits(_pid)
+    {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
-        pool.lpToken.safeTransfer(address(msg.sender), user.amount);
-        emit EmergencyWithdraw(msg.sender, _pid, user.amount);
+        if (_pid == 0) {
+            pool.lpToken.safeTransfer(address(msg.sender), user.amount);
+            emit EmergencyWithdraw(msg.sender, _pid, user.amount);
+            depositedKus.sub(user.amount);
+            user.amount = 0;
+            user.rewardDebt = 0;
+        }
         user.amount = 0;
         user.rewardDebt = 0;
+        pool.lpToken.safeTransfer(address(msg.sender), user.amount);
+        emit EmergencyWithdraw(msg.sender, _pid, user.amount);
     }
 
     // Safe KUS transfer function, just in case if rounding error causes pool to not have enough KUSs.
@@ -1672,16 +1987,23 @@ contract MasterKUS is Ownable {
 
     function setDevAddress(address _devaddr) public onlyOwner {
         devaddr = _devaddr;
+        emit SetDevAddress(_devaddr);
     }
-     function setComAddress(address _comaddr) public onlyOwner {
+
+    function setComAddress(address _comaddr) public onlyOwner {
         comAddr = _comaddr;
+        emit SetComAddress(_comaddr);
     }
-    function setKuVaultAddress(address _kuVaultaddr) public onlyOwner{
+
+    function setKuVaultAddress(address _kuVaultaddr) public onlyOwner {
         kuVaultaddr = _kuVaultaddr;
+        emit SetKuVaultAddress(_kuVaultaddr);
     }
+
     function updateKusPerBlock(uint256 newAmount) public onlyOwner {
-        require(newAmount <= 30 * 1e18, 'Max per block 30 KUS');
-        require(newAmount >= 1 * 1e18, 'Min per block 1 KUS');
+        require(newAmount <= 30 * 1e18, "Max per block 30 KUS");
+        require(newAmount >= 1 * 1e18, "Min per block 1 KUS");
         KUSPerBlock = newAmount;
+        emit UpdateKusPerBlock(newAmount);
     }
 }
